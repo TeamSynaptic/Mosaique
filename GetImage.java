@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
-public class Pictur{
+public class GetImage{
 
     static final File dir = new File("C:/Users/mahir/Desktop/pictures");
     static final String[] EXTENSIONS = new String[]{
