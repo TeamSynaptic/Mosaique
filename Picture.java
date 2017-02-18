@@ -6,14 +6,14 @@ import java.awt.*;
 import java.util.*;
 
 public class Picture {
-	static int scalex;
-	static int scaley;
+	private int scalex;
+	private int scaley;
 	public Picture(int sx, int sy){
 		scalex = sx;
 		scaley = sy;
 	}
 	//Get the integer array of RGB values
-	public static int[][] convertTo2DUsingGetRGB(BufferedImage image) {
+	public int[][] convertTo2DUsingGetRGB(BufferedImage image) {
       int width = image.getWidth();
       int height = image.getHeight();
       int[][] result = new int[height][width];
@@ -25,16 +25,16 @@ public class Picture {
       return result;
    	}
    	//Change int array to RGB data
-   	public static RGB[][] getRGBAverages(int[][] rgb){
+   	public RGB[][] getRGBAverages(int[][] rgb){
    		RGB[][] result = new RGB[rgb.length/scaley][rgb[0].length/scalex];
    		int redAverage = 0;
    		int greenAverage = 0;
    		int blueAverage = 0;
-   		int idx = 0;
-   		int idy = 0;
-   		for(int i = 0; i < rgb.length/scaley; i++){
+   		int idx = 0; //Current index of x
+   		int idy = 0; //Current index of y
+   		for(int i = 0; i < rgb.length/scaley; i++){ //Search each section
    			for(int j = 0; j < rgb[i].length/scalex; j++){
-   				for(int y = 0; y <  scaley; y++){
+   				for(int y = 0; y <  scaley; y++){ //Get the values of each pixel for each section
    					for(int x = 0; x < scalex; x++){
 		   				Color c = new Color(rgb[idy+y][idx+x]);
 		   				redAverage += c.getRed();
@@ -42,24 +42,24 @@ public class Picture {
 		   				greenAverage += c.getGreen();
 	   				}
    				}
-   				idx += scalex;
+   				idx += scalex; //Move on to next x section
    				result[i][j] = new RGB(redAverage, blueAverage, greenAverage);
    			}
-   			idy += scaley;
+   			idy += scaley; //Move on to next y section, reset x index
    			idx = 0;
    		}
    		for(int i = 0; i < result.length; i++){
    			for(int j = 0; j < result[i].length; j++){
-   				System.out.println(result[i][j].red + " " + result[i][j].blue + " " + result[i][j].green);
-   				result[i][j].red = result[i][j].red / (scalex * scaley);
-   				result[i][j].blue = result[i][j].blue / (scalex * scaley);
-   				result[i][j].green = result[i][j].green / (scalex * scaley);
+   				result[i][j].setRed(result[i][j].getRed() / (scalex * scaley));
+   				result[i][j].setBlue(result[i][j].getBlue() / (scalex * scaley));
+   				result[i][j].setGreen(result[i][j].getGreen() / (scalex * scaley));
    			}
    		}
    		return result;
    	}
    	//Change int array to RGB average per image
-   	public static RGB RGBAverage(int[][] rgb){
+   	//Same algorithm as above, but don't need to store each section. Just get overall average
+   	public RGB RGBAverage(int[][] rgb){
    		int redAverage = 0;
    		int greenAverage = 0;
    		int blueAverage = 0;
@@ -87,31 +87,43 @@ public class Picture {
    		return result;
    	}
    	//Compare each images RGB and get smallest difference
-   	public static BufferedImage[][] buildImage(RGB[][] original, HashMap<BufferedImage, RGB> images){
-   		BufferedImage[][] result = new BufferedImage[original.length][original[0].length];
+   	public BufferedImage[][] buildImage(RGB[][] original, HashMap<BufferedImage, RGB> images){
+   		BufferedImage[][] result = new BufferedImage[original.length][original[0].length]; //Image array for drawing later based on scalex & scaley
    		for(int i = 0; i < original.length; i++){
    			for(int j = 0; j < original[i].length; j++){
-   				BufferedImage bi = null;
+   				BufferedImage bi = null; //Image to add
    				int diff = -1;
    				for(Map.Entry<BufferedImage, RGB> entry : images.entrySet()){
-   					if(diff == -1){
-   						diff = (Math.abs(entry.getValue().red - original[i][j].red)) 
-   						+ (Math.abs(entry.getValue().green - original[i][j].green)) 
-   						+ (Math.abs(entry.getValue().blue - original[i][j].blue));
+   					if(diff == -1){ //Set default as the first entry
+   						diff = (Math.abs(entry.getValue().getRed() - original[i][j].getRed())) 
+   						+ (Math.abs(entry.getValue().getGreen() - original[i][j].getGreen())) 
+   						+ (Math.abs(entry.getValue().getBlue() - original[i][j].getBlue()));
    						bi = entry.getKey();
    					} else {
-   						int curr = (Math.abs(entry.getValue().red - original[i][j].red)) 
-   						+ (Math.abs(entry.getValue().green - original[i][j].green)) 
-   						+ (Math.abs(entry.getValue().blue - original[i][j].blue));
-   						if(curr < diff){
+   						int curr = (Math.abs(entry.getValue().getRed() - original[i][j].getRed())) 
+   						+ (Math.abs(entry.getValue().getGreen() - original[i][j].getGreen())) 
+   						+ (Math.abs(entry.getValue().getBlue() - original[i][j].getBlue()));
+   						if(curr < diff){ //If the difference is smaller, set image as this one
    							diff = curr;
    							bi = entry.getKey();
    						}
    					}
    				}
-   				result[i][j] = bi;
+   				result[i][j] = bi;//This is image
    			}
    		}
    		return result;
+   	}
+   	public int getScaleX(){
+   		return scalex;
+   	}
+   	public int getScaleY(){
+   		return scaley;
+   	}
+   	public void setScaleX(int sx){
+   		scalex = sx;
+   	}
+   	public void setScaleY(int sy){
+   		scaley = sy;
    	}
 }
