@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 public class GetImage{
 
-    static final File dir = new File("C:/Users/mahir/Desktop/pictures");
+    static File dir = new File("C:/");
     static final String[] EXTENSIONS = new String[]{
         "gif", "png", "bmp", "jpg" // and other formats you need
     };
@@ -25,6 +25,11 @@ public class GetImage{
             return (false);
         }
     };
+
+    //Set file location
+    public static void setFileLocation(String cd){
+        dir = new File(cd);
+    }
 
     public static ArrayList<BufferedImage> getImages () {
     	ArrayList<BufferedImage> out = new ArrayList<BufferedImage>();
