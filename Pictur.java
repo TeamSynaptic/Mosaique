@@ -40,7 +40,7 @@ public class Pictur{
         return out;
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
     	JFrame frame = new JFrame();
     	ArrayList<BufferedImage> list = getImages();
     	BufferedImage img = list.get(1);
@@ -50,5 +50,5 @@ public class Pictur{
 		frame.pack();
 		frame.setVisible(true);
 		while(true){}
-    }
+    }*///TODE
 }
