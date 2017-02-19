@@ -151,6 +151,8 @@ public class Mosaique {
 			} else {
 				this.setPreferredSize(screenSize);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 50)); 
+				g.setColor(Color.DARK_GRAY);
+				g.fillRect(0, 0, screenSize.width, screenSize.height);
 				g.setColor(Color.WHITE);
 				g.drawString("Mosaique",screenSize.width/2-150, screenSize.height/2-50);
 			}
