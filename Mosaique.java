@@ -9,7 +9,7 @@ import javax.swing.event.*;
 import java.util.*;
 import java.awt.event.*;
 
-public class Mosiaque {
+public class Mosaique {
 
 	static ArrayList<BufferedImage> imgs = new ArrayList<BufferedImage>();
 	static BufferedImage[][] gallery;
@@ -36,7 +36,7 @@ public class Mosiaque {
             UIManager.getSystemLookAndFeelClassName());
     	} catch (Exception e) {}
     	screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		window = new JFrame("Mosiaque");
+		window = new JFrame("Mosaique");
 		screenSize.height = screenSize.height - 100;
 		screenSize.width = screenSize.width - 100;
 		window.setBounds(0,0,screenSize.width, screenSize.height);
@@ -81,6 +81,9 @@ public class Mosiaque {
 		JMenuItem sliderhelp = new JMenuItem("Slider help");
 		sliderhelp.addActionListener(new SliderHelp());
 		menu.add(sliderhelp);
+		JMenuItem about = new JMenuItem("About");
+		about.addActionListener(new About());
+		menu.add(about);
 		menuBar.add(menu);
 
 		window.setJMenuBar(menuBar);
@@ -103,8 +106,8 @@ public class Mosiaque {
                     canvas.repaint();
                     canvas.revalidate();
                 } else if (e.getKeyCode() == KeyEvent.VK_O) {
-                    if(sx - 10 >= 0)sx -= 10;
-                    if(sy - 10 >= 0)sy -= 10;
+	                sx = Math.max(sx-10, size);
+	                sy = Math.max(sy-10, size);
                     canvas.repaint();
                     canvas.revalidate();
                 }
@@ -147,6 +150,9 @@ public class Mosiaque {
 				}
 			} else {
 				this.setPreferredSize(screenSize);
+				g.setFont(new Font("TimesRoman", Font.PLAIN, 50)); 
+				g.setColor(Color.WHITE);
+				g.drawString("Mosaique",screenSize.width/2-150, screenSize.height/2-50);
 			}
 		}
 	}
@@ -177,16 +183,23 @@ public class Mosiaque {
 			e.printStackTrace();
 		}
 	}
+	public static class About implements ActionListener, ItemListener{
+		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(window, "Mosaique is a generative art program created by Rui Li, Alex Shi, Mahir Rahman and Ekim Karabey at Fraser Hacks 2017.");
+    	}
+    	public void itemStateChanged(ItemEvent e) {
+	    }
+	}
 	public static class SetUp implements ActionListener, ItemListener{
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(window, "Choose original image: This will be the image you wish to transform. \nChoose image library: This will be the folder that contains images you wish to draw the original image with. \nSave location: This is the location where you will save the generated image if that is the option selected.");
+			JOptionPane.showMessageDialog(window, "Choose original image: This will be the image you wish to transform. \n\nChoose image library: This will be the folder that contains images you wish to draw the original image with. \n\nSave location: This is the location where you will save the generated image if that is the option selected.");
     	}
     	public void itemStateChanged(ItemEvent e) {
 	    }
 	}
 	public static class Generation implements ActionListener, ItemListener{
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(window, "Generate without preview: This will generate the image and save it directly without preview here. A save location must be specified.\nGenerate with preview: This will generate and save the image with a preview. A save location must be specified. \nGenerate without saving: This will let you preview the image, but won't save the image.\nPressing I and O zooms the picture in and out.");
+			JOptionPane.showMessageDialog(window, "Generate without preview: This will generate the image and save it directly without preview here. A save location must be specified.\n\nGenerate with preview: This will generate and save the image with a preview. A save location must be specified. \n\nGenerate without saving: This will let you preview the image, but won't save the image.\n\nPressing I and O zooms the picture in and out.");
     	}
     	public void itemStateChanged(ItemEvent e) {
 	    }
@@ -208,7 +221,7 @@ public class Mosiaque {
 			    if(GetImage.accept(yourFile.getName())){
 			    	try{
 			    		original = ImageIO.read(yourFile);
-			    		JOptionPane.showMessageDialog(window, "Picture added");
+			    		JOptionPane.showMessageDialog(window, "Picture set");
 			    	}catch (Exception d){
 			    		d.printStackTrace();
 			    	}
@@ -230,7 +243,7 @@ public class Mosiaque {
 			    File yourFolder = fc.getSelectedFile();
 			    GetImage.dir = yourFolder;
 			    pix = GetImage.getImages();
-			    JOptionPane.showMessageDialog(window, "Pictures added");
+			    JOptionPane.showMessageDialog(window, "Pictures set\n(Make sure this folder has enough images otherwise results could be disappointing!)");
 			}
     	}
     	public void itemStateChanged(ItemEvent e) {
@@ -247,7 +260,7 @@ public class Mosiaque {
 	        	if(GetImage.accept(yourFile.getName())){
 	        		try{
 	        			saveLocation = yourFile;
-	        			JOptionPane.showMessageDialog(window, "Save location updated");
+	        			JOptionPane.showMessageDialog(window, "Save location set");
 	        		} catch (Exception d){
 	        			d.printStackTrace();
 	        		}
