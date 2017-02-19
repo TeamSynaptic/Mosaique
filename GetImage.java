@@ -26,6 +26,28 @@ public class GetImage{
         }
     };
 
+    //What is the previous thing ????
+    static final FilenameFilter FILTER = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            for (final String ext : EXTENSIONS) {
+                if (name.endsWith("." + ext)) {
+                    return (true);
+                }
+            }
+            return (false);
+        }
+    };
+
+    public static boolean accept(String name) {
+        for (final String ext : EXTENSIONS) {
+            if (name.endsWith("." + ext)) {
+                return (true);
+            }
+        }
+        return (false);
+    }
+
     //Set file location
     public static void setFileLocation(String cd){
         dir = new File(cd);
