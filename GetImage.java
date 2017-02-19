@@ -10,7 +10,7 @@ public class GetImage{
 
     static File dir = new File("C:/");
     static final String[] EXTENSIONS = new String[]{
-        "gif", "png", "bmp", "jpg" // and other formats you need
+        "gif", "png", "bmp", "jpg", "jpeg" // and other formats you need
     };
 
     // filter to identify images based on their extensions
@@ -39,10 +39,22 @@ public class GetImage{
                 try {
                     img = ImageIO.read(f);
                     out.add(img);  
-                } catch (final IOException e) {}
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return out;
+    }
+
+    public static BufferedImage getOriginal(String directory){
+        BufferedImage image = null;
+        try{
+            image = ImageIO.read(new File(directory));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return image;
     }
 
     /*public static void main(String[] args){

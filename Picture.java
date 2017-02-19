@@ -34,26 +34,12 @@ public class Picture {
    		int idy = 0; //Current index of y
    		for(int i = 0; i < rgb.length/scaley; i++){ //Search each section
    			for(int j = 0; j < rgb[i].length/scalex; j++){
-   				for(int y = 0; y <  scaley; y++){ //Get the values of each pixel for each section
-   					for(int x = 0; x < scalex; x++){
-		   				Color c = new Color(rgb[idy+y][idx+x]);
-		   				redAverage += c.getRed();
-		   				blueAverage += c.getBlue();
-		   				greenAverage += c.getGreen();
-	   				}
-   				}
+		   		Color c = new Color(rgb[idy+scaley/2][idx+scalex/2]);
    				idx += scalex; //Move on to next x section
-   				result[i][j] = new RGB(redAverage, blueAverage, greenAverage);
+   				result[i][j] = new RGB(c.getRed(), c.getBlue(), c.getGreen());
    			}
    			idy += scaley; //Move on to next y section, reset x index
    			idx = 0;
-   		}
-   		for(int i = 0; i < result.length; i++){
-   			for(int j = 0; j < result[i].length; j++){
-   				result[i][j].setRed(result[i][j].getRed() / (scalex * scaley));
-   				result[i][j].setBlue(result[i][j].getBlue() / (scalex * scaley));
-   				result[i][j].setGreen(result[i][j].getGreen() / (scalex * scaley));
-   			}
    		}
    		return result;
    	}
@@ -80,31 +66,28 @@ public class Picture {
    			idy += scaley;
    			idx = 0;
    		}
-   		redAverage = redAverage / (rgb.length * rgb[0].length);
-   		blueAverage = blueAverage / (rgb.length * rgb[0].length);
-   		greenAverage = greenAverage / (rgb.length * rgb[0].length);
+   		redAverage = (int)Math.round(redAverage / Double.valueOf((rgb.length * rgb[0].length)));
+   		blueAverage = (int)Math.round(blueAverage / Double.valueOf((rgb.length * rgb[0].length)));
+   		greenAverage = (int)Math.round(greenAverage / Double.valueOf((rgb.length * rgb[0].length)));
    		RGB result = new RGB(redAverage, blueAverage, greenAverage);
    		return result;
    	}
    	//Compare each images RGB and get smallest difference
-   	public BufferedImage[][] buildImage(RGB[][] original, HashMap<BufferedImage, RGB> images){
+   	public BufferedImage[][] buildImage(RGB[][] original, HashMap<BufferedImage, RGB > images){
    		BufferedImage[][] result = new BufferedImage[original.length][original[0].length]; //Image array for drawing later based on scalex & scaley
    		for(int i = 0; i < original.length; i++){
    			for(int j = 0; j < original[i].length; j++){
    				BufferedImage bi = null; //Image to add
-   				int diff = -1;
+   				double diff = -1;
    				for(Map.Entry<BufferedImage, RGB> entry : images.entrySet()){
    					if(diff == -1){ //Set default as the first entry
-   						diff = (Math.abs(entry.getValue().getRed() - original[i][j].getRed())) 
-   						+ (Math.abs(entry.getValue().getGreen() - original[i][j].getGreen())) 
-   						+ (Math.abs(entry.getValue().getBlue() - original[i][j].getBlue()));
+                     double distance = Math.sqrt(Math.pow(entry.getValue().getRed() - original[i][j].getRed(),2) + Math.pow(entry.getValue().getGreen() - original[i][j].getGreen(),2) + Math.pow(entry.getValue().getBlue() - original[i][j].getBlue(),2));
+                     diff = distance;
    						bi = entry.getKey();
    					} else {
-   						int curr = (Math.abs(entry.getValue().getRed() - original[i][j].getRed())) 
-   						+ (Math.abs(entry.getValue().getGreen() - original[i][j].getGreen())) 
-   						+ (Math.abs(entry.getValue().getBlue() - original[i][j].getBlue()));
-   						if(curr < diff){ //If the difference is smaller, set image as this one
-   							diff = curr;
+   						double distance = Math.sqrt(Math.pow(entry.getValue().getRed() - original[i][j].getRed(),2) + Math.pow(entry.getValue().getGreen() - original[i][j].getGreen(),2) + Math.pow(entry.getValue().getBlue() - original[i][j].getBlue(),2));
+   						if(distance <= diff){ //If the difference is smaller, set image as this one
+   							diff = distance;
    							bi = entry.getKey();
    						}
    					}
