@@ -29,12 +29,15 @@ public class Mosaique {
 	static boolean preview = false;
 	static Dimension screenSize;
 	static int size = 5;
+	static JScrollPane scrollPane;
 
 	public static void main(String args[]){
+		//Set look and feel for system default
 		try {
         	UIManager.setLookAndFeel(
             UIManager.getSystemLookAndFeelClassName());
     	} catch (Exception e) {}
+    	//Default screen size of program
     	screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		window = new JFrame("Mosaique");
 		screenSize.height = screenSize.height - 100;
@@ -70,7 +73,7 @@ public class Mosaique {
 		generateNoSave.addActionListener(new GenerateNoSave());
 		menu.add(generateNoSave);
 		menuBar.add(menu);
-
+		//Help menu
 		menu = new JMenu("Help");
 		JMenuItem setup = new JMenuItem("Setup help");
 		setup.addActionListener(new SetUp());
@@ -87,11 +90,14 @@ public class Mosaique {
 		menuBar.add(menu);
 
 		window.setJMenuBar(menuBar);
+		//Slider
 		JSlider slider = new JSlider(2, 15, 5);
 		slider.addChangeListener(new SliderListener());
+		//Setting size for scrolling
 		canvas = new Canvas();
 		canvas.setPreferredSize(screenSize);
-		JScrollPane scrollPane = new JScrollPane(canvas, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		//Scrollpane
+		scrollPane = new JScrollPane(canvas, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setWheelScrollingEnabled(true);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 		window.addKeyListener(new KeyListener() {
@@ -120,8 +126,16 @@ public class Mosaique {
 		window.requestFocusInWindow();
         window.getContentPane().add(slider, BorderLayout.NORTH);
 		window.getContentPane().add(scrollPane, BorderLayout.CENTER);
+		//Resizing fix
+		window.addComponentListener(new ComponentAdapter() {
+		    public void componentResized(ComponentEvent e) {
+		        canvas.repaint();
+		        canvas.revalidate();
+		    }
+		});
 		window.setVisible(true);
-	}	
+	}
+	/*Slider*/
 	static class SliderListener implements ChangeListener {
 	    public void stateChanged(ChangeEvent e) {
 	        JSlider source = (JSlider)e.getSource();
@@ -131,6 +145,7 @@ public class Mosaique {
 	        }
 	    }
 	}
+	/*Content panel*/
 	public static class Canvas extends JPanel{
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
@@ -152,12 +167,13 @@ public class Mosaique {
 				this.setPreferredSize(screenSize);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 50)); 
 				g.setColor(Color.DARK_GRAY);
-				g.fillRect(0, 0, screenSize.width, screenSize.height);
+				g.fillRect(0, 0, window.getWidth(), window.getHeight());
 				g.setColor(Color.WHITE);
-				g.drawString("Mosaique",screenSize.width/2-150, screenSize.height/2-50);
+				g.drawString("Mosaique", window.getWidth()/2-150, window.getHeight()/2-50);
 			}
 		}
 	}
+	/*Saving image*/
 	public static void saveImage(){
 		save = new BufferedImage(h, v, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = save.createGraphics();
@@ -185,6 +201,7 @@ public class Mosaique {
 			e.printStackTrace();
 		}
 	}
+	/*Bunch of listeners, pretty self explanatory from the names*/
 	public static class About implements ActionListener, ItemListener{
 		public void actionPerformed(ActionEvent e) {
 			JOptionPane.showMessageDialog(window, "Mosaique is a generative art program created by Rui Li, Alex Shi, Mahir Rahman and Ekim Karabey at Fraser Hacks 2017.");
@@ -201,7 +218,7 @@ public class Mosaique {
 	}
 	public static class Generation implements ActionListener, ItemListener{
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(window, "Generate without preview: This will generate the image and save it directly without preview here. A save location must be specified.\n\nGenerate with preview: This will generate and save the image with a preview. A save location must be specified. \n\nGenerate without saving: This will let you preview the image, but won't save the image.\n\nPressing I and O zooms the picture in and out.");
+			JOptionPane.showMessageDialog(window, "Generate without preview: This will generate the image and save it directly without preview. A save location must be specified.\n\nGenerate with preview: This will generate and save the image with a preview. A save location must be specified. \n\nGenerate without saving: This will let you preview the image, but won't save the image.\n\nPressing I and O zooms the picture in and out.");
     	}
     	public void itemStateChanged(ItemEvent e) {
 	    }
@@ -245,7 +262,7 @@ public class Mosaique {
 			    File yourFolder = fc.getSelectedFile();
 			    GetImage.dir = yourFolder;
 			    pix = GetImage.getImages();
-			    JOptionPane.showMessageDialog(window, "Pictures set\n(Make sure this folder has enough images otherwise results could be disappointing!)");
+			    JOptionPane.showMessageDialog(window, "Pictures set");
 			}
     	}
     	public void itemStateChanged(ItemEvent e) {
@@ -297,6 +314,10 @@ public class Mosaique {
 				sy = cool.getScaleY();
 				canvas.repaint();
 				canvas.revalidate();
+				JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+			    JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+			    verticalScrollBar.setValue(verticalScrollBar.getMinimum());
+			    horizontalScrollBar.setValue(horizontalScrollBar.getMinimum());
         	} else {
 	        	JOptionPane.showMessageDialog(window, "Please finish setup");
 	        }
@@ -327,6 +348,10 @@ public class Mosaique {
 				sy = cool.getScaleY();
 				canvas.repaint();
 				canvas.revalidate();
+				JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+			    JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+			    verticalScrollBar.setValue(verticalScrollBar.getMinimum());
+			    horizontalScrollBar.setValue(horizontalScrollBar.getMinimum());
         	} else {
 		        JOptionPane.showMessageDialog(window, "Please finish setup");
 		    }
@@ -356,6 +381,10 @@ public class Mosaique {
 				sy = cool.getScaleY();
 				canvas.repaint();
 				canvas.revalidate();
+				JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+			    JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+			    verticalScrollBar.setValue(verticalScrollBar.getMinimum());
+			    horizontalScrollBar.setValue(horizontalScrollBar.getMinimum());
         	} else {
 	        	JOptionPane.showMessageDialog(window, "Please finish setup");
 	        }
